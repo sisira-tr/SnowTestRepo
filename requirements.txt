@@ -1,0 +1,14 @@
+numpy
+pandas
+matplotlib
+python-pptx
+python-dotenv
+cryptography
+Pillow
+snowflake-snowpark-python
+snowflake-connector-python
+sqlalchemy
+snowflake-sqlalchemy
+pytest
+streamlit
+pydantic
