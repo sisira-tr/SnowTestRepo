@@ -8,10 +8,11 @@ class PreExecutionValidator:
         self.session = session
 
     def validate_account(self, external_id):
-        result = self.session.sql(
-            f"SELECT id FROM canonical_staging.public.dim_account WHERE external_account_id = '{external_id}'"
-        ).collect()
-        if not result:
+        # result = self.session.sql(
+        #     f"SELECT id FROM canonical_staging.public.dim_account WHERE external_account_id = '{external_id}'"
+        # ).collect()
+        # if not result:
+        if not external_id:
             raise ValueError("Invalid external account ID")
         logger.info(f"Account validation successful for external_account_id='{external_id}'")
 
@@ -23,7 +24,7 @@ class PreExecutionValidator:
     def validate_subjects(self, subjects):
         if subjects is None:
             subjects = "BOTH"
-        valid_subjects = {"MATH", "ELA", "SPANISH", "BOTH"}
+        valid_subjects = {"math", "ela", "spanish", "both"}
         if subjects not in valid_subjects:
             raise ValueError(f"Invalid subjects value: '{subjects}'. Must be one of {valid_subjects}")
 

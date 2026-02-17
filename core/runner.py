@@ -9,8 +9,8 @@ logger = get_logger(__name__)
 
 class ReportRunner:
 
-    def __init__(self, report_registry):
-        self.report_registry = report_registry
+    def __init__(self, report_class):
+        self.report_class = report_class
         self.session_manager = SessionManager()
 
     def execute(self, config):
@@ -25,16 +25,15 @@ class ReportRunner:
     # SINGLE EXECUTION
     # --------------------------------
     def _run_single(self, config):
-        report_class = self.report_registry.get(config.report_name)
 
-        if not report_class:
+        if not self.report_class:
             raise ValueError(f"Unknown report: {config.report_name}")
 
         self.session = self.session_manager.get_session()
         self.session = self.session_manager.use_context(
-            warehouse="TRICON_MEDIUM",
-            database="SNOWFLAKE_STAGING",
-            schema="TRICON"
+            warehouse="COMPUTE_WH",
+            database="USER$SISUTEST",
+            schema="INFORMATION_SCHEMA"
         )
 
         # Validate
@@ -42,7 +41,7 @@ class ReportRunner:
         validator.validate(config)
 
         # Instantiate report
-        report = report_class(self.session, config)
+        report = self.report_class(self.session, config)
         # Execute pipeline
         queries = report.build_queries()
 
@@ -53,7 +52,7 @@ class ReportRunner:
             logger.info(f"Query '{name}' executed successfully, result shape: {raw_results[name].shape}")
 
         processed = report.process(raw_results)
-        logger.info(f"Data processed successfully, processed data shape: {processed.shape}")
+        logger.info(f"Data processed successfully, processed data shape: {processed}")
 
         output_path = report.generate_output(processed)
 

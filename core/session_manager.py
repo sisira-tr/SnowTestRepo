@@ -1,10 +1,8 @@
 import os
-from dotenv import load_dotenv
 from snowflake.snowpark.context import get_active_session
 from snowflake.snowpark import Session
 from core.logger import get_logger
 
-load_dotenv()
 logger = get_logger(__name__)
 
 class SessionManager:
@@ -23,6 +21,9 @@ class SessionManager:
                 return self.session
             
             logger.warning("SessionManager: no active Snowpark context session found — session is None")
+            
+            from dotenv import load_dotenv
+            load_dotenv()
             
             user = os.environ.get("SNOW_USER")
             account = os.environ.get("SNOW_ACCOUNT")
